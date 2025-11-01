@@ -1,0 +1,18 @@
+[package]
+name = "cpt-tui"
+version = "0.4.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+anyhow = "1.0"
+clap = { version = "4.4", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+crossterm = "0.27"
+ratatui = { version = "0.26", default-features = false, features = ["crossterm"] }
+cpt-core = { path = "../core" }
+
+[dev-dependencies]
+pretty_assertions = "1.4"
+rstest = "0.18"
+tempfile = "3.10"

@@ -1,0 +1,79 @@
+[env]
+CARGO_TERM_COLOR = "always"
+
+[tools]
+rust = "stable"
+
+[tasks.fmt]
+description = "Format the Rust code"
+run = "cargo fmt --all"
+
+[tasks.lint]
+description = "Lint with clippy and fail on warnings"
+run = "cargo clippy --workspace --all-targets -D warnings"
+
+[tasks.build]
+description = "Build every crate (debug)"
+run = "cargo build --workspace"
+
+[tasks.build-cli]
+description = "Build the CLI wrapper (debug)"
+run = "cargo build -p cpt"
+
+[tasks.build-tui]
+description = "Build the TUI crate (debug)"
+run = "cargo build -p cpt-tui"
+
+[tasks.build-desktop]
+description = "Build the desktop prototype"
+run = "cargo build -p cpt-desktop"
+
+[tasks.build-release]
+description = "Build the CLI (release)"
+run = "cargo build --release"
+
+[tasks.test]
+description = "Run the Rust test suite"
+run = "cargo test --workspace"
+
+[tasks.test-core]
+description = "Run core crate tests"
+run = "cargo test -p cpt-core"
+
+[tasks.test-tui]
+description = "Run TUI crate tests"
+run = "cargo test -p cpt-tui"
+
+[tasks.test-desktop]
+description = "Run desktop crate tests"
+run = "cargo test -p cpt-desktop"
+
+[tasks.run]
+description = "Run the TUI"
+run = "cargo run -- tui"
+
+[tasks.run-desktop]
+description = "Run the Desktop"
+run = "cargo run -- desktop"
+
+[tasks.debug]
+description = "Run the TUI with an isolated debug dataset"
+env = { CPT_DATA_DIR = "../tmp/debug-cpt" }
+run = "cargo run -- tui"
+
+[tasks.debug-desktop]
+description = "Run the desktop prototype"
+env = { CPT_DATA_DIR = "../tmp/debug-cpt" }
+run = "cargo run -- desktop"
+
+[tasks.reset-debug]
+description = "Clear the isolated debug dataset"
+run = "rm -rf ../tmp/debug-cpt && echo 'Removed ../tmp/debug-cpt'"
+
+[tasks.install]
+description = "Build release and install binary to ../bin/cpt"
+run = "cargo build --release && mkdir -p ../bin && cp -f target/release/cpt ../bin/cpt && echo 'Installed cpt to ../bin/cpt'"
+
+[tasks.bundle-desktop-macos]
+description = "Create a macOS .app bundle for the desktop shell"
+run = "scripts/build_macos_app.sh"
