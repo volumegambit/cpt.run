@@ -130,9 +130,10 @@ cargo run --bin cpt-mcp
 - Keep onboarding hints (`/help`, capture prompts) in sync with any string updates.
 
 ## License
-- License terms will be published before the first public release.
-- Until then, code is provided for review only; redistribution terms are not yet finalized.
+- Licensed under the GNU General Public License v3.0; see `LICENSE` for full terms.
+- Contributions must be GPLv3-compatible and include source when distributing binaries.
 
 ## Additional Resources
 - Desktop crate: `crates/desktop/`
 - MCP crate: `crates/mcp/`
+- License details: `LICENSE`
