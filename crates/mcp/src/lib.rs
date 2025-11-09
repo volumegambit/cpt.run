@@ -28,7 +28,13 @@ pub async fn run_server(config: ServerConfig) -> Result<()> {
         TasksService::new(app_config.clone()).context("failed to initialize task service")?,
     );
 
-    let server = build_server(tasks_service).context("failed to build MCP server")?;
+    let server = build_server(tasks_service.clone()).context("failed to build MCP server")?;
+
+    println!(
+        "Starting cpt-mcp v{} (data dir: {}) with tools: capture_task, list_tasks, update_status, defer_task, delete_tasks",
+        env!("CARGO_PKG_VERSION"),
+        app_config.data_dir().display()
+    );
 
     server
         .run_stdio()
