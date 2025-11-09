@@ -56,6 +56,10 @@ run = "cargo run -- tui"
 description = "Run the Desktop"
 run = "cargo run -- desktop"
 
+[tasks.run-mcp]
+description = "Run the MCP server"
+run = "cargo run -- mcp"
+
 [tasks.debug]
 description = "Run the TUI with an isolated debug dataset"
 env = { CPT_DATA_DIR = "../tmp/debug-cpt" }
