@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use async_trait::async_trait;
-use cpt_core::capture::CaptureInput;
+use cpt_core::capture::TaskInput;
 use cpt_core::model::TaskStatus;
 use cpt_core::services::TasksService;
 use pmcp::{RequestHandlerExtra, Result as McpResult, ToolHandler};
@@ -42,7 +42,7 @@ struct CaptureTaskArgs {
 }
 
 impl CaptureTaskArgs {
-    fn into_input(self) -> Result<CaptureInput> {
+    fn into_input(self) -> Result<TaskInput> {
         let status = match self.status {
             Some(status) => Some(TaskStatus::from_str(&status)?),
             None => None,
@@ -56,7 +56,7 @@ impl CaptureTaskArgs {
         let tags = normalize_list(self.tags);
         let areas = normalize_list(self.areas);
 
-        Ok(CaptureInput {
+        Ok(TaskInput {
             text: tokenize(&self.text),
             notes: self.notes,
             project: self.project,

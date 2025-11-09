@@ -271,7 +271,7 @@ fn sort_to_str(sort: SortField) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cpt_core::capture::CaptureInput;
+    use cpt_core::capture::TaskInput;
     use cpt_core::model::TaskStatus;
     use serde_json::json;
 
@@ -281,11 +281,11 @@ mod tests {
     async fn lists_tasks_by_view() {
         let (service, _dir) = test_service();
         {
-            let mut inbox = CaptureInput::default();
+            let mut inbox = TaskInput::default();
             inbox.text = vec!["Draft".into(), "plan".into()];
             service.capture(inbox).expect("capture inbox");
 
-            let mut next = CaptureInput::default();
+            let mut next = TaskInput::default();
             next.text = vec!["Ship".into(), "feature".into()];
             next.status = Some(TaskStatus::Next);
             service.capture(next).expect("capture next");

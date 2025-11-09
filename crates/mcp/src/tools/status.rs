@@ -30,7 +30,7 @@ enum StatusAction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cpt_core::capture::CaptureInput;
+    use cpt_core::capture::TaskInput;
     use cpt_core::model::TaskStatus;
     use serde_json::json;
 
@@ -40,7 +40,7 @@ mod tests {
     async fn mark_done_updates_status() {
         let (service, _dir) = test_service();
         let id = {
-            let mut input = CaptureInput::default();
+            let mut input = TaskInput::default();
             input.text = vec!["Review".into(), "spec".into()];
             service.capture(input).expect("capture").id
         };

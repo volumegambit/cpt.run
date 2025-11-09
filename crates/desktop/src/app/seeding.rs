@@ -2,7 +2,7 @@
 
 use anyhow::Result;
 
-use cpt_core::capture::CaptureInput;
+use cpt_core::capture::TaskInput;
 use cpt_core::model::ListFilters;
 use cpt_core::TasksService;
 
@@ -16,7 +16,7 @@ pub(crate) fn maybe_seed_sample_data(service: &TasksService) -> Result<bool> {
     }
 
     for seed in SAMPLE_SEEDS {
-        let mut input = CaptureInput::default();
+        let mut input = TaskInput::default();
         input.text = seed
             .text
             .split_whitespace()

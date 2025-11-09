@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::{value_parser, ArgAction, Args, Parser, Subcommand};
 
-use crate::capture::CaptureInput;
+use crate::capture::TaskInput;
 use crate::model::TaskStatus;
 
 #[derive(Parser, Debug, Clone)]
@@ -114,9 +114,9 @@ pub struct DeleteArgs {
     pub ids: Vec<String>,
 }
 
-impl From<&AddArgs> for CaptureInput {
+impl From<&AddArgs> for TaskInput {
     fn from(args: &AddArgs) -> Self {
-        CaptureInput {
+        TaskInput {
             text: args.text.clone(),
             notes: args.notes.clone(),
             project: args.project.clone(),
@@ -135,9 +135,9 @@ impl From<&AddArgs> for CaptureInput {
     }
 }
 
-impl From<AddArgs> for CaptureInput {
+impl From<AddArgs> for TaskInput {
     fn from(args: AddArgs) -> Self {
-        CaptureInput {
+        TaskInput {
             text: args.text,
             notes: args.notes,
             project: args.project,

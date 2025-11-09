@@ -5,7 +5,7 @@ use chrono::{prelude::*, Duration, Months};
 use once_cell::sync::Lazy;
 use regex::Regex;
 
-use crate::capture::CaptureInput;
+use crate::capture::TaskInput;
 use crate::model::{AddOutcome, EnergyLevel, InsertableTask, NewTask, TaskStatus};
 
 #[derive(Debug, Clone)]
@@ -31,7 +31,7 @@ struct InlineTokens {
     waiting_since: Option<DateTime<Utc>>,
 }
 
-pub fn prepare_new_task(input: &CaptureInput) -> Result<(InsertableTask, AddOutcome)> {
+pub fn prepare_new_task(input: &TaskInput) -> Result<(InsertableTask, AddOutcome)> {
     let parsed = parse_capture(input)?;
     let insertable = parsed.task.clone().into_insertable();
     let outcome = AddOutcome {
@@ -43,7 +43,7 @@ pub fn prepare_new_task(input: &CaptureInput) -> Result<(InsertableTask, AddOutc
     Ok((insertable, outcome))
 }
 
-pub fn parse_capture(input: &CaptureInput) -> Result<ParsedTask> {
+pub fn parse_capture(input: &TaskInput) -> Result<ParsedTask> {
     let raw_text = input.text.join(" ");
     let inline = parse_inline_tokens(&raw_text)?;
 
@@ -419,12 +419,12 @@ fn parse_weekday(label: &str) -> Option<Weekday> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::capture::CaptureInput;
+    use crate::capture::TaskInput;
     use pretty_assertions::assert_eq;
 
     #[test]
     fn parses_basic_tokens() {
-        let add = CaptureInput {
+        let add = TaskInput {
             text: vec![
                 "Email".into(),
                 "Alice".into(),
@@ -465,7 +465,7 @@ mod tests {
 
     #[test]
     fn waiting_token_defaults_status() {
-        let add = CaptureInput {
+        let add = TaskInput {
             text: vec!["Check".into(), "status".into(), "wait:Alice".into()],
             notes: None,
             project: None,
@@ -488,7 +488,7 @@ mod tests {
 
     #[test]
     fn explicit_status_overrides_waiting_default() {
-        let add = CaptureInput {
+        let add = TaskInput {
             text: vec!["Check".into(), "status".into(), "wait:Alice".into()],
             notes: None,
             project: None,
@@ -511,7 +511,7 @@ mod tests {
 
     #[test]
     fn parses_iso_due_dates() {
-        let add = CaptureInput {
+        let add = TaskInput {
             text: vec!["Submit".into(), "report".into(), "due:2025-12-24".into()],
             notes: None,
             project: None,

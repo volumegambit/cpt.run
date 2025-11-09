@@ -5,7 +5,7 @@ use anyhow::{anyhow, Result};
 
 use crate::cli::{CliCommand, DeleteArgs};
 use crate::config::AppConfig;
-use crate::core::commands as core_commands;
+use crate::core::services::TasksService;
 use crate::model::DeleteResult;
 
 pub fn execute<W: Write>(config: &AppConfig, command: CliCommand, mut writer: W) -> Result<()> {
@@ -18,7 +18,8 @@ pub fn execute<W: Write>(config: &AppConfig, command: CliCommand, mut writer: W)
 }
 
 fn handle_delete<W: Write>(config: &AppConfig, args: &DeleteArgs, mut writer: W) -> Result<()> {
-    let results = core_commands::delete_tasks(config, &args.ids)?;
+    let service = TasksService::new(config.clone())?;
+    let results = service.delete_tasks(&args.ids)?;
     let summary = DeleteSummary::from_results(&results);
     summary.write_to(&mut writer)?;
     Ok(())
@@ -86,7 +87,7 @@ impl fmt::Display for SummaryLine {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::capture::CaptureInput;
+    use crate::capture::TaskInput;
     use crate::db::Database;
     use tempfile::TempDir;
 
@@ -99,7 +100,7 @@ mod tests {
     }
 
     fn seed_task(db: &mut Database, text: Vec<String>) -> String {
-        let input = CaptureInput {
+        let input = TaskInput {
             text,
             notes: None,
             project: None,

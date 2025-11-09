@@ -8,7 +8,7 @@ use super::buffer::TextBuffer;
 use super::constants::*;
 use super::filters::{ActiveFilters, FilterFacets, FilterOverlay};
 use super::helpers::compose_task_capture;
-use crate::capture::CaptureInput;
+use crate::capture::TaskInput;
 use crate::config::AppConfig;
 use crate::db::Database;
 use crate::model::{ListFilters, ListOutputItem, ListView, ProjectSummary, Task, TaskStatus};
@@ -349,7 +349,7 @@ impl App {
             return Ok(());
         }
 
-        let capture = CaptureInput {
+        let capture = TaskInput {
             text: parts,
             notes: None,
             project: None,
@@ -512,7 +512,7 @@ impl App {
             return Ok(());
         }
 
-        let capture = CaptureInput {
+        let capture = TaskInput {
             text: tokens,
             notes: None,
             project: None,

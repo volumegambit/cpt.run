@@ -4,7 +4,7 @@ use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Utc};
 use rusqlite::{named_params, types::Value, Connection, Row, ToSql};
 
-use crate::capture::CaptureInput;
+use crate::capture::TaskInput;
 use crate::config::AppConfig;
 use crate::model::{
     AddOutcome, DeleteResult, EnergyLevel, ListFilters, ListOutputItem, ListView, ProjectSummary,
@@ -29,7 +29,7 @@ impl Database {
         Ok(db)
     }
 
-    pub fn handle_add(&mut self, input: &CaptureInput) -> Result<AddOutcome> {
+    pub fn handle_add(&mut self, input: &TaskInput) -> Result<AddOutcome> {
         let (insertable, outcome) = parser::prepare_new_task(input)?;
         self.insert_task(&insertable)?;
         Ok(outcome)
@@ -496,7 +496,7 @@ fn build_order_clause(filters: &ListFilters) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::capture::CaptureInput;
+    use crate::capture::TaskInput;
     use crate::model::{ListView, TaskStatus};
     use tempfile::TempDir;
 
@@ -539,7 +539,7 @@ mod tests {
             if let Some(due_str) = due {
                 text.push(format!("due:{}", due_str));
             }
-            CaptureInput {
+            TaskInput {
                 text,
                 notes: None,
                 project: None,
@@ -592,7 +592,7 @@ mod tests {
         let (config, _dir) = temp_config();
         let mut db = Database::initialize(&config).expect("initialize db");
 
-        let args = CaptureInput {
+        let args = TaskInput {
             text: vec![
                 "Write".into(),
                 "release".into(),
@@ -639,7 +639,7 @@ mod tests {
         let (config, _dir) = temp_config();
         let mut db = Database::initialize(&config).expect("initialize db");
 
-        let args = CaptureInput {
+        let args = TaskInput {
             text: vec!["Follow".into(), "Up".into()],
             notes: None,
             project: None,
@@ -676,7 +676,7 @@ mod tests {
         let (config, _dir) = temp_config();
         let mut db = Database::initialize(&config).expect("initialize db");
 
-        let args = CaptureInput {
+        let args = TaskInput {
             text: vec!["Outline".into(), "plan".into()],
             notes: None,
             project: None,
@@ -707,7 +707,7 @@ mod tests {
         let (config, _dir) = temp_config();
         let mut db = Database::initialize(&config).expect("initialize db");
 
-        let args = CaptureInput {
+        let args = TaskInput {
             text: vec!["Outline".into(), "plan".into()],
             notes: None,
             project: None,
@@ -757,7 +757,7 @@ mod tests {
         let (config, _dir) = temp_config();
         let mut db = Database::initialize(&config).expect("initialize db");
 
-        let args = CaptureInput {
+        let args = TaskInput {
             text: vec![
                 "Prepare".into(),
                 "slides".into(),
@@ -798,7 +798,7 @@ mod tests {
         let (config, _dir) = temp_config();
         let mut db = Database::initialize(&config).expect("initialize db");
 
-        let args = CaptureInput {
+        let args = TaskInput {
             text: vec![
                 "Await".into(),
                 "response".into(),
@@ -835,7 +835,7 @@ mod tests {
         let (config, _dir) = temp_config();
         let mut db = Database::initialize(&config).expect("initialize db");
 
-        let add_args = CaptureInput {
+        let add_args = TaskInput {
             text: vec![
                 "Write".into(),
                 "docs".into(),
@@ -859,7 +859,7 @@ mod tests {
         let outcome = db.handle_add(&add_args).expect("add task");
         let id = outcome.id;
 
-        let parsed = parser::parse_capture(&CaptureInput {
+        let parsed = parser::parse_capture(&TaskInput {
             text: vec![
                 "Revise".into(),
                 "plan".into(),
@@ -907,7 +907,7 @@ mod tests {
         let (config, _dir) = temp_config();
         let mut db = Database::initialize(&config).expect("initialize db");
 
-        let seed = |status: TaskStatus| CaptureInput {
+        let seed = |status: TaskStatus| TaskInput {
             text: vec![format!("{} task", status.as_str()), "+Alpha".into()],
             notes: None,
             project: None,

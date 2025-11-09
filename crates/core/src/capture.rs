@@ -4,7 +4,7 @@ use crate::model::TaskStatus;
 
 /// Normalized input for capturing a task from any client (CLI, TUI, desktop).
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct CaptureInput {
+pub struct TaskInput {
     pub text: Vec<String>,
     pub notes: Option<String>,
     pub project: Option<String>,
@@ -21,7 +21,7 @@ pub struct CaptureInput {
     pub waiting_since: Option<String>,
 }
 
-impl CaptureInput {
+impl TaskInput {
     pub fn require_text(&self) -> Result<(), CaptureError> {
         if self.text.is_empty() {
             return Err(CaptureError::EmptyText);

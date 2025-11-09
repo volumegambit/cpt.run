@@ -1,7 +1,7 @@
 //! Helper utilities for detecting environment defaults and previewing capture tokens.
 
 use chrono::{DateTime, Local, Utc};
-use cpt_core::capture::CaptureInput;
+use cpt_core::capture::TaskInput;
 use dark_light::Mode as ThemePreference;
 use iced::Theme;
 
@@ -19,12 +19,12 @@ pub(crate) fn capture_preview(input: &str) -> Result<Option<CapturePreview>, Str
     if input.trim().is_empty() {
         return Ok(None);
     }
-    let capture = CaptureInput {
+    let capture = TaskInput {
         text: input
             .split_whitespace()
             .map(|piece| piece.to_string())
             .collect(),
-        ..CaptureInput::default()
+        ..TaskInput::default()
     };
 
     match cpt_core::parser::parse_capture(&capture) {

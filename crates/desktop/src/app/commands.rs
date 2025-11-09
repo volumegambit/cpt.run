@@ -1,6 +1,6 @@
 //! Async adapters that map desktop intents into core task service calls.
 
-use cpt_core::capture::CaptureInput;
+use cpt_core::capture::TaskInput;
 use cpt_core::model::{AddOutcome, ListFilters};
 use cpt_core::TasksService;
 
@@ -24,7 +24,7 @@ pub(crate) fn load_view_command(service: TasksService, tab: ViewTab) -> Effect {
 
 pub(crate) fn capture_command(
     service: TasksService,
-    input: CaptureInput,
+    input: TaskInput,
 ) -> impl std::future::Future<Output = Result<AddOutcome, String>> {
     async move {
         tokio::task::spawn_blocking(move || service.capture(input))

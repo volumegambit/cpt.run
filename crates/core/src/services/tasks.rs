@@ -3,12 +3,12 @@ use std::collections::HashSet;
 use anyhow::Result;
 use chrono::{DateTime, Utc};
 
-use crate::capture::CaptureInput;
+use crate::capture::TaskInput;
 use crate::config::AppConfig;
 use crate::database::Database;
 use crate::model::{
-    AddOutcome, ListFilters, ListOutputItem, ListView, ProjectSummary, StatusUpdate, Task,
-    TaskStatus,
+    AddOutcome, DeleteResult, ListFilters, ListOutputItem, ListView, ProjectSummary, StatusUpdate,
+    Task, TaskStatus,
 };
 
 #[derive(Debug, Clone)]
@@ -62,7 +62,7 @@ impl TasksService {
         })
     }
 
-    pub fn capture(&self, input: CaptureInput) -> Result<AddOutcome> {
+    pub fn capture(&self, input: TaskInput) -> Result<AddOutcome> {
         input.require_text()?;
         let mut db = self.open_database()?;
         db.handle_add(&input)
@@ -86,6 +86,11 @@ impl TasksService {
     pub fn mark_someday(&self, ids: &[String]) -> Result<Vec<StatusUpdate>> {
         let db = self.open_database()?;
         db.mark_someday(ids)
+    }
+
+    pub fn delete_tasks(&self, ids: &[String]) -> Result<Vec<DeleteResult>> {
+        let db = self.open_database()?;
+        db.delete_tasks(ids)
     }
 
     pub fn defer_until(
@@ -216,7 +221,7 @@ mod tests {
     }
 
     fn capture_simple(service: &TasksService, title: &str) -> String {
-        let mut input = CaptureInput::default();
+        let mut input = TaskInput::default();
         input.text = title.split_whitespace().map(|s| s.to_string()).collect();
         service.capture(input).unwrap().id
     }
@@ -225,7 +230,7 @@ mod tests {
     fn lists_tasks_per_view() {
         let (service, _guard) = service_with_temp_dir();
         let inbox_id = capture_simple(&service, "Process invoices");
-        let mut next_input = CaptureInput::default();
+        let mut next_input = TaskInput::default();
         next_input.text = vec!["Follow".into(), "up".into()];
         next_input.status = Some(TaskStatus::Next);
         service.capture(next_input).unwrap();
@@ -266,5 +271,98 @@ mod tests {
             .unwrap();
         assert_eq!(updated.status, TaskStatus::Scheduled);
         assert!(updated.defer_until.is_some());
+    }
+
+    #[test]
+    fn update_project_trims_and_clears_value() {
+        let (service, _guard) = service_with_temp_dir();
+        let id = capture_simple(&service, "Plan release");
+
+        let with_project = service
+            .update_project(&id, Some("  Launch Prep  ".into()))
+            .unwrap()
+            .unwrap();
+        assert_eq!(with_project.project.as_deref(), Some("Launch Prep"));
+
+        let cleared = service
+            .update_project(&id, Some("   ".into()))
+            .unwrap()
+            .unwrap();
+        assert!(cleared.project.is_none());
+    }
+
+    #[test]
+    fn update_contexts_and_tags_normalize_lists() {
+        let (service, _guard) = service_with_temp_dir();
+        let id = capture_simple(&service, "Book travel");
+
+        service
+            .update_contexts(
+                &id,
+                vec![
+                    " Office ".into(),
+                    "office".into(),
+                    "Desk ".into(),
+                    " desk".into(),
+                    "Email".into(),
+                    "".into(),
+                ],
+            )
+            .unwrap();
+
+        service
+            .update_tags(
+                &id,
+                vec![
+                    " Errand ".into(),
+                    "errand".into(),
+                    "Weekend Planning".into(),
+                    "weekend planning".into(),
+                ],
+            )
+            .unwrap();
+
+        let task = service.fetch_task(&id).unwrap().unwrap();
+        assert_eq!(task.contexts, vec!["Office", "Desk", "Email"]);
+        assert_eq!(task.tags, vec!["Errand", "Weekend Planning"]);
+    }
+
+    #[test]
+    fn update_priority_clamps_to_allowed_range() {
+        let (service, _guard) = service_with_temp_dir();
+        let id = capture_simple(&service, "Confirm logistics");
+
+        let clamped_high = service.update_priority(&id, 10).unwrap().unwrap();
+        assert_eq!(clamped_high.priority, 3);
+
+        let unchanged_low = service.update_priority(&id, 0).unwrap().unwrap();
+        assert_eq!(unchanged_low.priority, 0);
+    }
+
+    #[test]
+    fn delete_tasks_removes_records_and_reports_missing() {
+        let (service, _guard) = service_with_temp_dir();
+        let keep_id = capture_simple(&service, "Keep reference");
+        let delete_id = capture_simple(&service, "Archive me");
+
+        let missing = "missing-task".to_string();
+        let results = service
+            .delete_tasks(&[delete_id.clone(), missing.clone()])
+            .unwrap();
+
+        let deleted = results
+            .iter()
+            .find(|r| r.id == delete_id)
+            .expect("deleted entry");
+        assert!(deleted.deleted);
+
+        let missing_entry = results
+            .iter()
+            .find(|r| r.id == missing)
+            .expect("missing entry");
+        assert!(!missing_entry.deleted);
+
+        assert!(service.fetch_task(&delete_id).unwrap().is_none());
+        assert!(service.fetch_task(&keep_id).unwrap().is_some());
     }
 }

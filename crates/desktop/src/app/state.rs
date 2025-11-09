@@ -3,7 +3,7 @@
 use std::time::Instant;
 
 use chrono::{DateTime, Utc};
-use cpt_core::capture::CaptureInput;
+use cpt_core::capture::TaskInput;
 use cpt_core::model::{ListView, TaskStatus};
 use cpt_core::ViewSnapshot;
 use iced::widget::Id;
@@ -177,14 +177,14 @@ impl CaptureState {
         }
     }
 
-    pub(crate) fn input(&self) -> CaptureInput {
-        CaptureInput {
+    pub(crate) fn input(&self) -> TaskInput {
+        TaskInput {
             text: self
                 .text
                 .split_whitespace()
                 .map(|piece| piece.to_string())
                 .collect(),
-            ..CaptureInput::default()
+            ..TaskInput::default()
         }
     }
 }
