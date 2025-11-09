@@ -30,7 +30,7 @@ pub async fn run_server(config: ServerConfig) -> Result<()> {
 
     let server = build_server(tasks_service.clone()).context("failed to build MCP server")?;
 
-    println!(
+    eprintln!(
         "Starting cpt-mcp v{} (data dir: {}) with tools: capture_task, list_tasks, update_status, defer_task, delete_tasks",
         env!("CARGO_PKG_VERSION"),
         app_config.data_dir().display()
