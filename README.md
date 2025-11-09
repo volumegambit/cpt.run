@@ -19,11 +19,13 @@
 - [Additional Resources](#additional-resources)
 
 ## Highlights
-- Native desktop shell powered by `iced` for macOS, Windows, and Linux.
-- Shared Rust core crate (`cpt-core`) keeps business logic, storage, and validation consistent across surfaces.
-- Bundled SQLite storage with sensible defaults that work in both debug and release builds.
-- Model Context Protocol (MCP) server exposes capture/list/update flows for automations and agents.
-- Keyboard-first terminal UI remains available as a companion experience built on the same core.
+- Native desktop app powered by `iced` for macOS, Windows, and Linux.
+- Local first, Privacy-first, AI powered
+- Capture : Capture all that needs to be done
+- Plan : Plan and organize using best practices
+- Track : Track progress
+- Run : Execute with focus
+
 
 ## Project Status
 - **Desktop:** Phase 1 (core infrastructure) actively in progress.

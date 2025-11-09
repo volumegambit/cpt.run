@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use cpt_core::commands;
 use cpt_core::services::TasksService;
 use pmcp::{RequestHandlerExtra, Result as McpResult, ToolHandler};
 use serde::Deserialize;
@@ -36,8 +35,7 @@ impl ToolHandler for DeleteTasksTool {
 
         let ids = parsed.ids;
         let results = with_service(self.service.clone(), move |service| {
-            let config = service.config().clone();
-            commands::delete_tasks(&config, &ids)
+            service.delete_tasks(&ids)
         })
         .await
         .map_err(internal_error)?;
