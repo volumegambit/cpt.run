@@ -2,17 +2,18 @@
 
 #[cfg(test)]
 mod tests {
+    use iced::keyboard::key::{NativeCode, Physical};
     use iced::keyboard::{Event as KeyboardEvent, Key, Location, Modifiers};
     use tempfile::TempDir;
 
     use cpt_core::model::ListFilters;
     use cpt_core::{AppConfig, TasksService};
 
-    use super::desktop::CptDesktop;
-    use super::message::Message;
-    use super::options::{DesktopFlags, DesktopOptions};
-    use super::seeding::maybe_seed_sample_data;
-    use super::state::ViewTab;
+    use crate::app::desktop::CptDesktop;
+    use crate::app::message::Message;
+    use crate::app::options::{DesktopFlags, DesktopOptions};
+    use crate::app::seeding::maybe_seed_sample_data;
+    use crate::app::state::ViewTab;
 
     fn init_app() -> (CptDesktop, TasksService, TempDir) {
         let temp_dir = TempDir::new().expect("temp dir");
@@ -29,7 +30,7 @@ mod tests {
         let snapshot = service
             .list(&ListFilters::for_view(ViewTab::Inbox.list_view()))
             .unwrap();
-        let _ = app.update(Message::ViewLoaded(ViewTab::Inbox, Ok(snapshot)));
+        let _ = app.react(Message::ViewLoaded(ViewTab::Inbox, Ok(snapshot)));
         (app, service, temp_dir)
     }
 
@@ -37,14 +38,17 @@ mod tests {
     fn ctrl_k_opens_command_palette() {
         let (mut app, _service, _guard) = init_app();
 
+        let key = Key::Character("k".into());
         let event = KeyboardEvent::KeyPressed {
-            key: Key::Character("k".into()),
+            key: key.clone(),
+            modified_key: key.clone(),
+            physical_key: Physical::Unidentified(NativeCode::Unidentified),
             location: Location::Standard,
             modifiers: Modifiers::COMMAND,
             text: Some("k".into()),
         };
 
-        let _ = app.update(Message::Keyboard(event));
+        let _ = app.react(Message::Keyboard(event));
         assert!(app.command_palette.open);
         assert!(!app.capture.open);
     }
@@ -59,7 +63,7 @@ mod tests {
             .id
             .clone();
 
-        let _ = app.update(Message::RowSelected(first_id.clone()));
+        let _ = app.react(Message::RowSelected(first_id.clone()));
         assert_eq!(app.selected_task.as_deref(), Some(first_id.as_str()))
     }
 
@@ -72,16 +76,19 @@ mod tests {
             .expect("sample tasks available")
             .id
             .clone();
-        let _ = app.update(Message::RowSelected(first_id.clone()));
+        let _ = app.react(Message::RowSelected(first_id.clone()));
 
+        let key = Key::Character("d".into());
         let event = KeyboardEvent::KeyPressed {
-            key: Key::Character("d".into()),
+            key: key.clone(),
+            modified_key: key.clone(),
+            physical_key: Physical::Unidentified(NativeCode::Unidentified),
             location: Location::Standard,
             modifiers: Modifiers::default(),
             text: Some("d".into()),
         };
 
-        let _ = app.update(Message::Keyboard(event));
+        let _ = app.react(Message::Keyboard(event));
         assert!(app.pending_mutations >= 1);
     }
 }

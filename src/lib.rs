@@ -12,5 +12,3 @@ pub use cpt_core::parser;
 
 pub use cpt_desktop as desktop;
 pub use cpt_desktop::DesktopOptions;
-
-pub use cpt_mcp as mcp;

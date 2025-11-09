@@ -37,7 +37,7 @@ pub fn run(options: DesktopOptions) -> iced::Result {
     };
 
     iced::application(
-        move || CptDesktop::bootstrap(boot_flags.clone()),
+        move || CptDesktop::new(boot_flags.clone()),
         CptDesktop::react,
         views::compose_root,
     )
@@ -96,7 +96,7 @@ pub(crate) struct CptDesktop {
 }
 
 impl CptDesktop {
-    fn bootstrap(flags: DesktopFlags) -> (Self, Effect) {
+    pub(crate) fn new(flags: DesktopFlags) -> (Self, Effect) {
         let theme = detect_theme();
         let palette = Palette::for_theme(&theme);
         let telemetry = telemetry::Handle::new();

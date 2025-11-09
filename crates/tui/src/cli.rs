@@ -11,7 +11,7 @@ use crate::model::TaskStatus;
     version,
     about = "A local-first privacy-first tool to get things done.",
     author = "Gerry Eng",
-    after_help = "Examples:\n  cpt             Launch the TUI (same as `cpt tui`)\n  cpt desktop --refresh-interval 10\n  cpt mcp --log debug\n  cpt delete 123"
+    after_help = "Examples:\n  cpt             Launch the TUI (same as `cpt tui`)\n  cpt desktop --refresh-interval 10\n  cpt delete 123"
 )]
 pub struct Cli {
     /// Override the data directory (defaults to platform-specific app dir)
@@ -30,8 +30,6 @@ pub enum CliCommand {
     Desktop(DesktopArgs),
     /// Delete one or more tasks by id
     Delete(DeleteArgs),
-    /// Run the Model Context Protocol server over stdio
-    Mcp(McpArgs),
 }
 
 #[derive(Args, Debug, Clone)]
@@ -39,13 +37,6 @@ pub struct DesktopArgs {
     /// Refresh interval (seconds) for background view updates
     #[arg(long = "refresh-interval", value_name = "SECONDS", default_value_t = 5, value_parser = value_parser!(u64))]
     pub refresh_interval: u64,
-}
-
-#[derive(Args, Debug, Clone)]
-pub struct McpArgs {
-    /// Override the tracing filter for the MCP server (e.g. "info", "debug")
-    #[arg(long = "log", value_name = "DIRECTIVE")]
-    pub log_filter: Option<String>,
 }
 
 #[derive(Args, Debug, Clone)]

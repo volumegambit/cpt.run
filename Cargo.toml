@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/core", "crates/desktop", "crates/mcp", "crates/tui"]
+members = ["crates/core", "crates/desktop", "crates/tui"]
 resolver = "2"
 
 [package]
@@ -14,7 +14,6 @@ clap = { version = "4.4", features = ["derive"] }
 cpt-core = { path = "crates/core" }
 cpt-tui = { path = "crates/tui" }
 cpt-desktop = { path = "crates/desktop" }
-cpt-mcp = { path = "crates/mcp" }
 
 [dev-dependencies]
 iced = { git = "https://github.com/iced-rs/iced", rev = "bfc27e4691875840010e3d1e282b8e26b821c569", default-features = false, features = ["wgpu", "canvas", "tokio"] }

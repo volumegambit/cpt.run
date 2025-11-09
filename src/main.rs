@@ -18,13 +18,6 @@ fn main() -> Result<()> {
             let config = cpt::config::from_cli(&cli)?;
             cpt::tui::run(config)?;
         }
-        Some(cpt::cli::CliCommand::Mcp(args)) => {
-            let config = cpt::mcp::ServerConfig {
-                data_dir: cli.data_dir.clone(),
-                log_filter: args.log_filter.clone(),
-            };
-            cpt::mcp::run_server_blocking(config)?;
-        }
         Some(command) => {
             let config = cpt::config::from_cli(&cli)?;
             let stdout = std::io::stdout();

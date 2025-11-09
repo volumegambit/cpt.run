@@ -11,7 +11,7 @@ use crate::model::DeleteResult;
 pub fn execute<W: Write>(config: &AppConfig, command: CliCommand, mut writer: W) -> Result<()> {
     match command {
         CliCommand::Delete(args) => handle_delete(config, &args, &mut writer),
-        CliCommand::Tui | CliCommand::Desktop(_) | CliCommand::Mcp(_) => {
+        CliCommand::Tui | CliCommand::Desktop(_) => {
             Err(anyhow!("launch interactive surfaces directly"))
         }
     }

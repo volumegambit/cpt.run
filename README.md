@@ -103,18 +103,17 @@ cargo run --release -- tui
 
 ## Development
 Repository structure (top-level `desktop/` directory shown):
-- `src/`: Main binary entry point that dispatches to desktop, TUI, command, and MCP flows.
+- `src/`: Main binary entry point that dispatches to desktop, TUI, and CLI command flows.
 - `crates/core/`: `cpt-core` library with domain models, configuration, parser, storage, and command helpers.
 - `crates/tui/`: `cpt-tui` crate powering the terminal interface.
 - `crates/desktop/`: `cpt-desktop` iced-based desktop shell library.
-- `crates/mcp/`: `cpt-mcp` MCP server for agent integrations.
+- `crates/mcp/`: (temporarily removed) previous MCP server crate pending a rewrite on the official SDK.
 - `scripts/`: Automation helpers for builds, packaging, and data migrations.
 
 Common dev commands:
 ```bash
 cargo run -- desktop
 cargo run -- tui
-cargo run --bin cpt-mcp
 ```
 
 ## Release Notes
@@ -123,7 +122,7 @@ cargo run --bin cpt-mcp
 
 ## Roadmap
 - Phase 1: finalize core infrastructure for the desktop shell.
-- Upcoming focus: fold MCP feedback into the shared core, polish packaging, and document automation entry points.
+- Upcoming focus: rebuild the MCP surface on the official SDK, fold feedback into the shared core, polish packaging, and document automation entry points.
 - Track feature proposals and milestones via GitHub issues once the tracker is public.
 
 ## Contributing
@@ -137,5 +136,5 @@ cargo run --bin cpt-mcp
 
 ## Additional Resources
 - Desktop crate: `crates/desktop/`
-- MCP crate: `crates/mcp/`
+- MCP crate: returns once the rewrite lands under `crates/mcp/`
 - License details: `LICENSE`
